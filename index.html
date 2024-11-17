@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>text to speech converter</title>
+    
+  <style>
+    .hero {
+      width: 100%;
+      min-height: 100vh;
+      background: linear-gradient(45deg, #010758, #490d61);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: white;
+    }
+    .hero h1 {
+      font-size: 45px;
+      font-weight: 500;
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+    .hero span {
+      color: #ff2963;
+    }
+    textarea {
+      width: 100%;
+      height: 250px;
+      background: #403d84;
+      color: white;
+      font-size: 15px;
+      border: 0;
+      outline: 0;
+      padding: 20px;
+      border-radius: 10px;
+      resize: none;
+      margin-bottom: 30px;
+    }
+    textarea::placeholder {
+      font-size: 16px;
+      color: white;
+    }
+    .row {
+      width: 600px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    button {
+      background: #ff2963;
+      color: #fff;
+      font-size: 16px;
+      padding: 10px 40px;
+      border-radius: 5px;
+      border: 0;
+      outline: 0;
+      cursor: pointer;
+      display: flex;
+    }
+    select {
+      flex: 1;
+      color: #fff;
+      background: #403d84;
+      outline: 0;
+      border-radius: 5px;
+      padding: 10px 50px;
+    }
+    footer {
+      background: #010758;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+    footer span{
+      color:#ff2963;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hero">
+    <h1>Text to Speech <span>Converter</span></h1>
+    <textarea placeholder="Write anything here"></textarea>
+    <div class="row">
+      <select></select>
+      <button>Listen</button>
+    </div>
+  </div>
+  <footer>
+    Created by <span>CLIFFORD ISABOKE ONCHOMBA</span>
+  </footer>
+
+  <script>
+    let speech = new SpeechSynthesisUtterance();
+    let voices = [];
+
+    document.querySelector("button").addEventListener("click", () => {
+      speech.text = document.querySelector("textarea").value;
+      window.speechSynthesis.speak(speech);
+    });
+
+    let voiceSelect = document.querySelector("select");
+
+    function populateVoices() {
+      voices = window.speechSynthesis.getVoices();
+      voiceSelect.innerHTML = '';
+      voices.forEach((voice, i) => {
+        let option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${voice.name} (${voice.lang}) - ${voice.gender || 'Unknown gender'}`;
+        voiceSelect.appendChild(option);
+      });
+      if (voices.length > 0) {
+        speech.voice = voices[0];
+      }
+    }
+
+    if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoices;
+    }
+
+    voiceSelect.addEventListener("change", () => {
+      speech.voice = voices[voiceSelect.value];
+      speech.text = "This is the selected voice. text to speech converter created by Clifford isaboke Onchomba. write anything above to listen";
+      window.speechSynthesis.speak(speech);
+    });
+    populateVoices();
+  </script>
+</body>
+
+</html>
